@@ -1,0 +1,10 @@
+LICENSE
+pyproject.toml
+src/pyPCBA/__init__.py
+src/pyPCBA/lists.py
+src/pyPCBA/values.py
+src/pyPCBA.egg-info/PKG-INFO
+src/pyPCBA.egg-info/SOURCES.txt
+src/pyPCBA.egg-info/dependency_links.txt
+src/pyPCBA.egg-info/requires.txt
+src/pyPCBA.egg-info/top_level.txt
