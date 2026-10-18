@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 from sympy import Eq, symbols
 
+from pyPCBA.common import eq2sympy
 from pyPCBA.values import optimize
 
 
@@ -44,6 +45,26 @@ def test_optimize_accepts_single_equation_and_allows_equal_values() -> None:
 
     assert result.iloc[0]["x"] == result.iloc[0]["y"]
     assert result.iloc[0]["error"] == pytest.approx(0)
+
+
+def test_eq2sympy_rewrites_divider_and_parallel_operators() -> None:
+    """Circuit divider and parallel operators should rewrite to arithmetic forms."""
+    r1, r2 = symbols("R1 R2")
+
+    assert eq2sympy("R1 | R2 = 0.33") == Eq(r2 / (r1 + r2), 0.33, evaluate=False)
+    assert eq2sympy("R1 // R2 = 50") == Eq((r1 * r2) / (r1 + r2), 50, evaluate=False)
+
+
+def test_optimize_accepts_equation_strings_with_circuit_operators() -> None:
+    """Optimization should convert special-operator strings before SymPy parsing."""
+    result = optimize(
+        ["R1 | R2 = 0.33", "R1 // R2 = 50"],
+        [10, 50, 68, 100, 150],
+        num_solutions=5,
+    )
+
+    assert list(result.columns) == ["Rank", "R1", "R2", "error"]
+    assert result.iloc[0]["error"] >= 0
 
 
 def test_optimize_rejects_zero_target() -> None:

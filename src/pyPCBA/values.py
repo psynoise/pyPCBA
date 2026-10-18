@@ -9,11 +9,13 @@ import numpy as np
 import pandas as pd
 import sympy as sp
 
+from pyPCBA.common import eq2sympy
+
 __all__ = ["optimize"]
 
 
 def optimize(
-    equations: sp.Equality | Sequence[sp.Equality],
+    equations: str | sp.Equality | Sequence[str | sp.Equality],
     series: Iterable[float] | np.ndarray,
     num_solutions: int = 10,
 ) -> pd.DataFrame:
@@ -27,8 +29,10 @@ def optimize(
     ``error = sum(((left_hand_side - right_hand_side) / right_hand_side) ** 2)``
 
     Args:
-        equations: One SymPy equality or a sequence of equalities. Every free
-            symbol in these equations is treated as a variable.
+        equations: One equation string or SymPy equality, or a sequence of
+            equation strings and equalities. Strings may use circuit operators
+            such as ``"R1 | R2 = 0.33"``. Every free symbol is treated as a
+            variable.
         series: Non-empty one-dimensional iterable of positive numeric values
             allowed for each variable.
         num_solutions: Maximum number of ranked solutions to return. Defaults
@@ -50,18 +54,30 @@ def optimize(
         >>> from pyPCBA.values import optimize
         >>> r1, r2 = symbols("R1 R2")
         >>> optimize(Eq(r2 / (r1 + r2), 0.5), [100, 120, 150])
+        >>> optimize("R1 | R2 = 0.5", [100, 120, 150])
     """
-    if isinstance(equations, sp.Equality):
-        equation_list = [equations]
+    if isinstance(equations, bool):
+        raise TypeError("equations must be strings or SymPy equalities.")
+    if isinstance(equations, (str, sp.Equality)):
+        equation_list = [eq2sympy(equations)]
     elif isinstance(equations, Sequence) and not isinstance(equations, (str, bytes)):
-        equation_list = list(equations)
+        equation_list = []
+        for equation in equations:
+            try:
+                equation_list.append(eq2sympy(equation))
+            except (TypeError, ValueError) as error:
+                raise TypeError(
+                    "Every item in equations must be a string or SymPy equality."
+                ) from error
     else:
-        raise TypeError("equations must be a SymPy equality or a sequence of equalities.")
+        raise TypeError(
+            "equations must be a string, SymPy equality, or a sequence of them."
+        )
 
     if not equation_list:
         raise ValueError("At least one equation is required.")
     if any(not isinstance(equation, sp.Equality) for equation in equation_list):
-        raise TypeError("Every item in equations must be a SymPy equality.")
+        raise TypeError("Every item in equations must represent an equality.")
 
     if isinstance(num_solutions, bool) or not isinstance(num_solutions, int):
         raise TypeError("num_solutions must be a positive integer.")

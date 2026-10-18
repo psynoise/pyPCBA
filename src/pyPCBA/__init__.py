@@ -1,9 +1,8 @@
-"""pyPCBA package initial scaffold.
+"""Public package exports for pyPCBA."""
 
-This library is being initialized according to the project specification.
-The public API will be implemented in subsequent milestones.
-"""
+from pyPCBA.common import eq2sympy
+from pyPCBA.values import optimize
 
-__all__ = ["__version__"]
+__all__ = ["__version__", "eq2sympy", "optimize"]
 
 __version__ = "0.1.0"
