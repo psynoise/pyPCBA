@@ -1,4 +1,4 @@
-# pyPCBA - Version 0.1.2
+# pyPCBA - Version 0.1.3
 
 ## 1 Purpose
 
@@ -30,7 +30,7 @@ and should if possible have:
 
 The following modules shall be implemented or updated if needed:
 
-* eq2sympy
+* common.py
 
 * lists.py
 
