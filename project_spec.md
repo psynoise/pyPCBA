@@ -1,4 +1,4 @@
-# pyPCBA - Version 0.1.1
+# pyPCBA - Version 0.1.2
 
 ## 1 Purpose
 
@@ -28,7 +28,9 @@ and should if possible have:
 
 ## 3 Scope for this version
 
-The following modules shall be implemented:
+The following modules shall be implemented or updated if needed:
+
+* eq2sympy
 
 * lists.py
 
