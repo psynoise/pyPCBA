@@ -1,4 +1,4 @@
-# pyPCBA - Version 0.1.0
+# pyPCBA - Version 0.1.1
 
 ## 1 Purpose
 
@@ -122,27 +122,39 @@ Examples of valid inputs:
 1kOhm" "10kOhm," "4.7uF" "4.7uH" "100nF" "2.2 MOhm"
 ```
 
-### 4.4 Mathematical expressions
-
-Expressions may be supplied either as:
-
-* SymPy expressions
-
-* Strings
-
-Special operators:
-
-| Operator | Definition           | Note                          |
-| -------- | -------------------- | ----------------------------- |
-|          | \|                   | x \|                          |
-| //       | x // y = (x*y)/(x+y) | Alternative parallel operator |
-|          |                      | x \| y = (y)/(x+y)            |
-
 ## 5 Modules to implement
 
 This section lists modules to be implemented now.
 
-### 5.1 lists.py
+### 5.1 common.py
+
+#### Function eq2sympy
+
+ep2sympy(equations: str)
+
+Purpose:
+
+* Translates equations with special operators to SymPy expressions.
+
+Input parameters:
+
+* equations: Strings or SymPy expressions.
+
+Algorithm: 
+
+* Trough substitution, translate special operators defined in table below to  SymPy expressions.
+
+Special operators:
+
+| Operator | Definition            | Note                                 |
+| -------- | --------------------- | ------------------------------------ |
+| |        | x \| y = (y)/(x+y)    | Voltage or current divider operator. |
+| |\|      | x \|| y = (x*y)/(x+y) | Parallel operator.                   |
+| //       | x // y = (x*y)/(x+y)  | Alternative parallel operator.       |
+
+Return value: SymPy expressions.
+
+### 5.2 lists.py
 
 #### Function e_series
 
@@ -150,7 +162,7 @@ e_series(
     series: str, 
     min_value: float,
     max_value: float,
-    filename: str | None = None
+    filename: str | None = None)
 
 Purpose:
 
@@ -204,7 +216,7 @@ e_series(E12, 100, 100k)
 
 Gives an array with preferred numbers according to E12-series from 100 to 100e3.
 
-### 5.2 values.py
+### 5.3 values.py
 
 #### Function optimize
 
@@ -217,6 +229,8 @@ Purpose:
 Input parameters:
 
 * equations: A list of symbolic equations.
+  
+  * Input shall be translated to SymPy expressions with the function eq2sympy() specified above.
   
   * All SymPy symbols appearing in the equations shall be treated as optimization variables.
   
